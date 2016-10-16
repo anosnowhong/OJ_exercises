@@ -1,29 +1,31 @@
 class Solution {
 	public:
 		int lengthOfLongestSubstring(string s) {
-			int count=0,maxlen=0;
+			int i,j=0,maxlen=0;
 			unordered_map<char,int> alpha_table;
-			for(int i=0; i<s.length(); i++){
+			for(i=0; i<s.length(); i++){
 				auto it = alpha_table.find(s[i]);
-				if(it != alpha_table.end()){
-					alpha_table.clear();
-					if(count>maxlen)
-						maxlen = count;
+				//
+				if(it != alpha_table.end()&&it->second>=j){
+					if((i-j)>maxlen)
+						maxlen =(i-j);
 					//go back 1 offset
 					//i--;//this only take the constant repeat into consideration not the repeat between several letters
-					i = it->second;
-					count=0;
+					//i = it->second; this repeat some meaning operations
+					//count=0;
+					j = it->second+1;
+					//update the location of repeat letter
+					alpha_table[s[i]]=i;
+
 				}
 				else{
-					alpha_table.insert({s[i], i});
-					count++;
+					//alpha_table.insert({s[i], i});
+					//insert or update
+					alpha_table[s[i]]=i;
 				}
 			}
-			//if there is no repeat untill the end of a string
-			if(count>maxlen)
-				maxlen = count;
-
-			//cout<<maxlen<<endl;
+			if((i-j)>maxlen)
+				maxlen=i-j;
 
 			return maxlen;
 		}
