@@ -7,6 +7,8 @@ public:
     for(int j=0;j<R;j++){
       sw=true;
       k=j;
+      if(R==1)
+        return s;
       for(;k<s.length();){
         if(j==0||j==R-1){
           output += s[k];
