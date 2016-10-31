@@ -1,86 +1,74 @@
 /*
-type* ins[size];
-memset(ins, 0x00, sizeof(ins));
-
-vector<type *> ins;
-ins(52,NULL);
-*/
+  1.Actually we don't need to save a char to TrieNode, as the index can
+  also be refered to as a letter.
+  2.Using a boolean value to represent a node is an end of a word or not.
+  3.Remember to initialize pointers `TrieNode * childNodes[26]={NULL}`
+ */
+#include <iostream>
+using namespace std;
 
 class TrieNode {
 public:
-  static const int MAX_BRANCHES;
   // Initialize your data structure here.
   TrieNode() {
     //childNodes = new TrieNode[26];
     //childNodes(26,NULL);
-    childNodes.resize(27);
+    //childNodes.resize(27);
   }
   //TrieNode[] childNodes;
-  vector<TrieNode *> childNodes;
-  //TrieNode * childNodes[MAX_BRANCHES];
-  char nodeChar;
+  //vector<TrieNode *> childNodes;
+  TrieNode * childNodes[26]={NULL};
+  bool isNode = false;
 };
 
 class Trie {
 public:
   Trie() {
     root = new TrieNode();
-    cpoint = root;
   }
 
   // Inserts a word into the trie.
   void insert(string word) {
-    cpoint = root;
-    
-    if(word.length()==0) return;
+    TrieNode *current = root;
     for(int i=0;i<word.length();i++){
-      int id = word[i]-'a';
-      if(cpoint->childNodes[id] == NULL){
-        cpoint->childNodes[id] = new TrieNode();
-        cpoint->childNodes[id]->nodeChar=word[i];
-      }
-      cpoint = cpoint->childNodes[id];
+      int index = word[i] - 'a';
+      if(current->childNodes[index] == NULL)
+        current->childNodes[index] = new TrieNode();
+      current = current->childNodes[index];
     }
-    if(cpoint->childNodes[26] == NULL){
-        cpoint->childNodes[26] = new TrieNode();
-        cpoint->childNodes[26]->nodeChar='\0';
-    }
-
+    current->isNode = true;
   }
 
   // Returns if the word is in the trie.
   bool search(string word) {
-    cpoint = root;
-    if(word.length()==0) return false;
+    TrieNode *current = root;
     for(int i=0;i<word.length();i++){
-      int id = word[i]-'a';
-      if(cpoint->childNodes[id] == NULL)
+      int index = word[i] - 'a';
+      if(current->childNodes[index] != NULL)
+        current = current->childNodes[index];
+      else
         return false;
-      cpoint = cpoint->childNodes[id];
     }
-    if(cpoint->childNodes[26] == NULL) return false;
-    else if(cpoint->childNodes[26]->nodeChar=='\0') return true;
-    return false;
+    if(current->isNode == true) return true;
+    else return false;
   }
 
   // Returns if there is any word in the trie
   // that starts with the given prefix.
   bool startsWith(string prefix) {
-    cpoint = root;
-    if(prefix.length()==0) return false;
+    TrieNode *current = root;
     for(int i=0;i<prefix.length();i++){
-      int id = prefix[i]-'a';
-      if(cpoint->childNodes[id] == NULL)
+      int index = prefix[i] - 'a';
+      if(current->childNodes[index] != NULL)
+        current = current->childNodes[index];
+      else
         return false;
-      cpoint = cpoint->childNodes[id];
     }
- 
     return true;
   }
 
 private:
   TrieNode* root;
-  TrieNode* cpoint;
 };
 
 // Your Trie object will be instantiated and called as such:
