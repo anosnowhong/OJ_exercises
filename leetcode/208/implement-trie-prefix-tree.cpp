@@ -1,77 +1,58 @@
-/*
-  1.Actually we don't need to save a char to TrieNode, as the index can
-  also be refered to as a letter.
-  2.Using a boolean value to represent a node is an end of a word or not.
-  3.Remember to initialize pointers `TrieNode * childNodes[26]={NULL}`
- */
-#include <iostream>
-using namespace std;
-
-class TrieNode {
+class TrieNode{
 public:
-  // Initialize your data structure here.
-  TrieNode() {
-    //childNodes = new TrieNode[26];
-    //childNodes(26,NULL);
-    //childNodes.resize(27);
-  }
-  //TrieNode[] childNodes;
-  //vector<TrieNode *> childNodes;
-  TrieNode * childNodes[26]={NULL};
-  bool isNode = false;
+	TrieNode(){
+		children.resize(26,NULL);
+	};
+	bool wdend=false;
+	vector<TrieNode*> children;
 };
 
-class Trie {
+class Trie{
 public:
-  Trie() {
-    root = new TrieNode();
+	Trie(){
+		root = new TrieNode();
+	}
+  ~Trie(){
   }
-
-  // Inserts a word into the trie.
-  void insert(string word) {
-    TrieNode *current = root;
-    for(int i=0;i<word.length();i++){
-      int index = word[i] - 'a';
-      if(current->childNodes[index] == NULL)
-        current->childNodes[index] = new TrieNode();
-      current = current->childNodes[index];
-    }
-    current->isNode = true;
-  }
-
-  // Returns if the word is in the trie.
-  bool search(string word) {
-    TrieNode *current = root;
-    for(int i=0;i<word.length();i++){
-      int index = word[i] - 'a';
-      if(current->childNodes[index] != NULL)
-        current = current->childNodes[index];
-      else
-        return false;
-    }
-    if(current->isNode == true) return true;
-    else return false;
-  }
-
-  // Returns if there is any word in the trie
-  // that starts with the given prefix.
-  bool startsWith(string prefix) {
-    TrieNode *current = root;
-    for(int i=0;i<prefix.length();i++){
-      int index = prefix[i] - 'a';
-      if(current->childNodes[index] != NULL)
-        current = current->childNodes[index];
-      else
-        return false;
-    }
-    return true;
-  }
-
-private:
-  TrieNode* root;
+	bool insert(string word){
+		if(word.size()==0) return false;//try to add invalid word.
+		//if(word.size()>=15) return false;//I think no word would larger than this.
+		TrieNode* cproot = root;
+		int index;
+		for(int i=0;i<word.size();i++){
+			index = word[i]-'a';
+			if(cproot->children[index]==NULL)
+				cproot->children[index]=new TrieNode();//need add check if failed.
+			cproot = cproot->children[index];
+		}
+		cproot->wdend=true;
+		return true;//successfully add a word.
+	}
+	bool primitive_search(string word, TrieNode* &cproot){
+	    if(word.size()==0) return false;
+		//if(word.size()>=15) return false;
+		int index;
+		for(int i=0;i<word.size();i++){
+			index=word[i]-'a';
+			if(cproot->children[index]==NULL) return false;
+			cproot = cproot->children[index];
+		}
+		return true;
+	}
+	//a normal search method
+	bool search(string word){
+	    TrieNode* cproot = root;
+	    bool result = primitive_search(word, cproot);
+	    if(result){
+	        if(cproot->wdend==false) return false;
+		    return true;
+	    }
+	    return false;
+	}
+	bool startsWith(string prefix){
+		TrieNode* cproot = root;
+		bool result = primitive_search(prefix, cproot);
+		return result;
+	}
+	TrieNode* root;
 };
-
-// Your Trie object will be instantiated and called as such:
-// Trie trie;
-// trie.insert("somestring");
-// trie.search("key");
