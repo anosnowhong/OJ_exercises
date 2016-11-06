@@ -1,10 +1,8 @@
 class TrieNode{
 public:
-	TrieNode(){
-		children.resize(26,NULL);
-	};
+	TrieNode(){};
 	bool wdend=false;
-	vector<TrieNode*> children;
+  TrieNode* children[26]{};
 };
 
 class Trie{
