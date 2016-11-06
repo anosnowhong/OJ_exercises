@@ -11,6 +11,7 @@ public:
 		root = new TrieNode();
 	}
   ~Trie(){
+    //delete pointers and array
   }
 	bool insert(string word){
 		if(word.size()==0) return false;//try to add invalid word.
@@ -26,31 +27,27 @@ public:
 		cproot->wdend=true;
 		return true;//successfully add a word.
 	}
-	bool primitive_search(string word, TrieNode* &cproot){
-	    if(word.size()==0) return false;
-		//if(word.size()>=15) return false;
-		int index;
-		for(int i=0;i<word.size();i++){
-			index=word[i]-'a';
-			if(cproot->children[index]==NULL) return false;
-			cproot = cproot->children[index];
-		}
-		return true;
-	}
 	//a normal search method
 	bool search(string word){
-	    TrieNode* cproot = root;
-	    bool result = primitive_search(word, cproot);
-	    if(result){
-	        if(cproot->wdend==false) return false;
-		    return true;
-	    }
-	    return false;
+    TrieNode* tmp = find(word);
+    if(tmp == nullptr||!(tmp->wdend)) return false;
+    return true;
 	}
 	bool startsWith(string prefix){
-		TrieNode* cproot = root;
-		bool result = primitive_search(prefix, cproot);
-		return result;
+    TrieNode* tmp = find(prefix);
+    if(tmp == nullptr) return false;
+    return true;
 	}
 	TrieNode* root;
+private:
+  TrieNode* find(const string &word){//if word is empty, return root
+    auto cproot = root;
+    int index;
+    for(auto c : word){
+      index =  c - 'a';
+      if(cproot->children[index] == nullptr) return cproot->children[index];
+      cproot = cproot->children[index];
+    }
+    return cproot;
+  }
 };
