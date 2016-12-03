@@ -16,11 +16,9 @@ public:
     stack<TreeNode*> pp, qq;
     pp.push(p);
     qq.push(q);
-    TreeNode* tmp_p;
-    TreeNode* tmp_q;
     while(!pp.empty()&&!qq.empty()){
-      tmp_p = pp.top();
-      tmp_q = qq.top();
+      TreeNode* tmp_p = pp.top();
+      TreeNode* tmp_q = qq.top();
       //1
       if(tmp_p==NULL&&tmp_q==NULL){
           pp.pop();qq.pop();
