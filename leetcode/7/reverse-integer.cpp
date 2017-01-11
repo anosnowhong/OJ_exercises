@@ -10,13 +10,32 @@
 class Solution {
 public:
   int reverse(int x) {
-    if(x == 0) return 0;
     long long re = 0;
     while(x!=0){
       re = re*10 + x%10;
       x = x/10;
     }
     if(re>INT_MAX||re<INT_MIN) return 0;
+    return re;
+  }
+};
+
+/*
+  Instead of using long long, a more common solution is
+  to make the use of calculation relationship.
+  Backup the accumulating number do a math calculation, if
+  the result is as expected, it's ok. Otherwise, it may overflow.
+ */
+class Solution2 {
+public:
+  int reverse(int x) {
+    int re = 0;
+    while(x!=0){
+      int tmp = re*10 + x%10;
+      if(tmp/10 != re) return 0;
+      re = tmp;
+      x = x/10;
+    }
     return re;
   }
 };
