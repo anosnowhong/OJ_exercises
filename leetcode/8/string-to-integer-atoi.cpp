@@ -1,37 +1,57 @@
+/*
+  This atoi function is designed to accepted all kinds of irregular input.
+  Be aware that your task is processing the abnormal input can try to give an
+  reasonable answer.
+*/
 class Solution {
 public:
-    int myAtoi(string str) {
-       //get a valid string
-       auto itr = str.begin();
-       while(*itr == ' ') itr++;
-       auto ss = itr;
-       while(*itr != ' ' && itr != str.end()) itr++;
-       auto ee = itr-1;
-       string new_str = str.substr(ss-str.begin(), ee-ss+1);
-       cout<<new_str<<endl;
-       //transfer to integer within valid range
-       itr = new_str.begin();
-       int sym_num=0;
-       while(*itr - '0' < 0 && itr != new_str.end()){
-           if(*itr == '+'||*itr == '-') sym_num++;
-           itr++;
-       }
-       if(sym_num>1) return 0;
-       if(itr == new_str.end()) return 0;
-
-       int result=0,tmp=0;
-       while(itr != new_str.end()){
-           //handle alpha character 
-           if(*itr - '0'<=9 && *itr - '0'>=0) result = result*10 + *itr - '0';
-           else break;
-           //handle overflow case
-           if(result/10 != tmp && *new_str.begin() == '-') return INT_MIN;
-           else if(result/10!=tmp) return INT_MAX;
-
-           tmp = result;
-           itr++;
-       }
-       if(*new_str.begin()=='-') return -result;
-       else return result;
+  int myAtoi(string str) {
+    long result=0;
+    int indicator=1;
+    for(int i=0; i<str.size();){
+      i = str.find_first_not_of(' ');
+      if(str[i] == '-'||str[i] == '+'){
+        indicator = str[i++] == '-' ? -1 : 1;
+      }
+      //don't need to count how many symbols
+      //if the next character is not a valid number just stop and return
+      while(str[i] >= '0' && str[i] <= '9'){
+        result = result*10 + str[i++] - '0';
+        if(result*indicator >= INT_MAX) return INT_MAX;
+        if(result*indicator <= INT_MIN) return INT_MIN;
+      }
+      return result*indicator;
     }
+    return 0;
+  }
+};
+
+
+
+class Solution {
+public:
+  int myAtoi(string str) {
+    int indicator=1;
+    int result=0;
+    for(auto itr = str.begin(); itr!=str.end();){
+      while(*itr == ' ') itr++;
+
+      if(*itr == '-') {indicator = -1; itr++;}
+      else if(*itr == '+') {indicator = 1; itr++;}
+
+      int tmp=0;
+
+      while(*itr - '0'>=0 && *itr-'0'<=9){
+        result = result*10 + *itr - '0';
+        //check overflow
+        if(result/10 != tmp)
+          return indicator>0?INT_MAX:INT_MIN;
+
+        tmp = result;
+        itr++;
+      }
+      return indicator*result;
+    }
+    return 0;
+  }
 };
